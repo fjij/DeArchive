@@ -1,0 +1,19 @@
+{
+  "name": "dearchive",
+  "initiators": [
+    {
+      "type": "runlog",
+      "params": {
+        "address": "<INSERT ORACLE ADDRESS>"
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "type": "dearchive"
+    },
+    {
+      "type": "ethtx"
+    }
+  ]
+}

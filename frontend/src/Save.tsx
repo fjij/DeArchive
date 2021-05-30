@@ -1,0 +1,24 @@
+import React from 'react';
+
+interface SaveProps {
+  connectWallet: () => void;
+  savePage: () => void;
+  walletConnected: boolean;
+}
+
+export function Save({ connectWallet, walletConnected, savePage }: SaveProps) {
+  return (
+    <div>
+      <h3>Add to Archive</h3>
+      <p>
+        { walletConnected ?
+          <button className="App-input" onClick={savePage}>Pay 1 LINK</button>
+            :
+          <button className="App-input" onClick={connectWallet}>
+            Connect Wallet
+          </button>
+        }
+      </p>
+    </div>
+  );
+}

@@ -9,7 +9,7 @@ interface ResultsProps {
   currentUrl: string;
   entries: Entry[];
   page: number;
-  setPage: (a: number) => void;
+  setPage: (a: (page: number) => number) => void;
   totalPages: number;
 }
 
@@ -34,20 +34,24 @@ export function Results({ currentUrl, entries, page, totalPages, setPage}: Resul
           {'This page hasn\'t been archived yet.'}
         </small>
       }
-      <p>
-        Page {page + 1}/{totalPages}
-      </p>
-      <p>
-        <button className="App-input" disabled={page <= 0}
-        onClick={() => {
-          setPage(page => page - 1);
-        }}>⬅</button>
+      { 
+        entries.length > 0 && <>
+          <p>
+            Page {page + 1}/{totalPages}
+          </p>
+          <p>
+            <button className="App-input" disabled={page <= 0}
+            onClick={() => {
+              setPage(page => page - 1);
+            }}>⬅</button>
 
-        <button className="App-input" disabled={page >= totalPages - 1}
-        onClick={() => {
-          setPage(page => page + 1);
-        }}>➡</button>
-      </p>
+            <button className="App-input" disabled={page >= totalPages - 1}
+            onClick={() => {
+              setPage(page => page + 1);
+            }}>➡</button>
+          </p>
+        </>
+      }
     </div>
   );
 }

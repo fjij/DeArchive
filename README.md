@@ -1,5 +1,5 @@
 # DeArchive 📚
-The Decentralized Website Archive
+The Decentralized Internet Archive
 
 Archive webistes as they are now so they can be viewed for generations.
 

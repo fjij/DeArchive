@@ -14,16 +14,18 @@ async function main() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   const DeArchive = await ethers.getContractFactory("DeArchive");
-  const contract = await DeArchive.deploy();
+  const contract = await DeArchive.deploy(
+    process.env.DEARCHIVE_ORACLE_ADDRESS,
+    process.env.DEARCHIVE_JOB_ID,
+  );
 
   console.log("DeArchive contract address:", contract.address);
 
   copyArtifact('DeArchive');
   writeConfig({
-    oracleAddress: process.env.DEARCHIVE_ORACLE_ADDRESS,
-    jobId: process.env.DEARCHIVE_JOB_ID,
     contractAddress: contract.address,
     linkAddress: process.env.DEARCHIVE_LINK_ADDRESS,
+    rpc: process.env.DEARCHIVE_RINKEBY_RPC
   });
 }
 

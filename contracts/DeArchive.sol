@@ -2,6 +2,7 @@ pragma solidity 0.4.24;
 
 import "@chainlink/contracts/src/v0.4/ChainlinkClient.sol";
 import "@chainlink/contracts/src/v0.4/vendor/Ownable.sol";
+import "./interfaces/ERC20Basic.sol";
 
 contract DeArchive is ChainlinkClient, Ownable {
   uint256 constant private ORACLE_PAYMENT = 1 * LINK;
@@ -11,6 +12,9 @@ contract DeArchive is ChainlinkClient, Ownable {
     uint256 indexed hash
   );
 
+  address oracle;
+  string jobId;
+
   struct Entry {
     uint256 hash;
     uint time;
@@ -19,8 +23,10 @@ contract DeArchive is ChainlinkClient, Ownable {
   mapping(bytes32 => string) requests;
   mapping(string => Entry[]) entries;
 
-  constructor() public Ownable() {
+  constructor(address _oracle, string _jobId) public Ownable() {
     setPublicChainlinkToken();
+    oracle = _oracle;
+    jobId = _jobId;
   }
 
   function getEntryCount(string _url) public view returns (uint256) {
@@ -31,13 +37,21 @@ contract DeArchive is ChainlinkClient, Ownable {
     return (entries[_url][_idx].hash, entries[_url][_idx].time);
   }
 
-  function requestDearchive(address _oracle, string _jobId, string _url)
-    public
-    onlyOwner
+  function onTokenTransfer(address, uint256, bytes _data)
+    external
   {
-    Chainlink.Request memory req = buildChainlinkRequest(stringToBytes32(_jobId), this, this.fulfillDearchive.selector);
+    ERC20Basic token = ERC20Basic(chainlinkTokenAddress());
+    require(token.balanceOf(this) >= 1*LINK);
+    string memory _url = string(_data);
+    requestDearchive(_url);
+  }
+
+  function requestDearchive(string _url)
+    internal
+  {
+    Chainlink.Request memory req = buildChainlinkRequest(stringToBytes32(jobId), this, this.fulfillDearchive.selector);
     req.add("url", _url);
-    bytes32 _requestId = sendChainlinkRequestTo(_oracle, req, ORACLE_PAYMENT);
+    bytes32 _requestId = sendChainlinkRequestTo(oracle, req, ORACLE_PAYMENT);
     requests[_requestId] = _url;
   }
   

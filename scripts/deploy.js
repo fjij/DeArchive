@@ -1,3 +1,7 @@
+const fs = require('fs');
+const path = require('path');
+const contractsDir = __dirname + "/../frontend/src/contracts";
+
 async function main() {
 
   const [deployer] = await ethers.getSigners();
@@ -14,6 +18,28 @@ async function main() {
 
   console.log("DeArchive contract address:", contract.address);
 
+  copyArtifact('DeArchive');
+  writeConfig({
+    oracleAddress: process.env.DEARCHIVE_ORACLE_ADDRESS,
+    jobId: process.env.DEARCHIVE_JOB_ID,
+    contractAddress: contract.address,
+    linkAddress: process.env.DEARCHIVE_LINK_ADDRESS,
+  });
+}
+
+
+function writeConfig(config) {
+  fs.writeFileSync(
+    contractsDir + "/config.json",
+    JSON.stringify(config, undefined, 2)
+  );
+}
+
+function copyArtifact(name) {
+  fs.copyFileSync(
+    path.join(__dirname, `../artifacts/contracts/${name}.sol/${name}.json`),
+    path.join(contractsDir, `/${name}.json`)
+  );
 }
 
 main()
